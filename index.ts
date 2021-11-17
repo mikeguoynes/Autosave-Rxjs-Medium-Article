@@ -1,18 +1,33 @@
 import './style.css';
-import { fromEvent } from 'rxjs';
+import {
+  distinctUntilChanged,
+  fromEvent,
+  debounceTime,
+  map,
+  tap,
+  of,
+  switchMap,
+} from 'rxjs';
 import { UserService } from './user.service';
 
-let numberOfRequests = 0;
+let numberOfRequests = 1;
 const service = new UserService();
 const nameInput = document.querySelector('input');
 const nameInputChanges$ = fromEvent(nameInput, 'keyup');
 
-nameInputChanges$.subscribe((inputEvent) => {
-  sendRequest(inputEvent?.target?.value);
-});
+// Listen for when user changes the name input.
+fromEvent(document.querySelector('input'), 'keyup')
+  .pipe(
+    map((event) => event.target.value), // map to return only what the user typed
+    debounceTime(500),
+    distinctUntilChanged(),
+    switchMap((name) => sendRequest$(name)) // Cancel previous, only care about latest.
+  )
+  .subscribe((value) => {
+    console.log('request sent', value);
+  });
 
-const sendRequest = (name: string) => {
-  service.save({ name });
+const sendRequest$ = (name: string) => {
   numberOfRequests++;
-  console.log('request sent', numberOfRequests);
+  return of({ results: [], for: name, numberOfRequests });
 };
