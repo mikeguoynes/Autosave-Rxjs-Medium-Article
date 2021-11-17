@@ -1,8 +1,8 @@
 export class UserService {
   constructor() {}
 
-  save(request: { name: string; password: string }) {
-    const { name, password } = request;
+  save(request: { name: string }) {
+    const { name } = request;
 
     return fetch('http://example.com/api/endpoint/', {
       method: 'post',
@@ -14,7 +14,6 @@ export class UserService {
       //make sure to serialize your JSON body
       body: JSON.stringify({
         name,
-        password,
       }),
     }).then((response) => {
       //do something awesome that makes the world a better place
