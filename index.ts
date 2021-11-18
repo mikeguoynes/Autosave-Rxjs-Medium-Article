@@ -4,16 +4,11 @@ import {
   fromEvent,
   debounceTime,
   map,
-  tap,
   of,
   switchMap,
 } from 'rxjs';
-import { UserService } from './user.service';
 
 let numberOfRequests = 1;
-const service = new UserService();
-const nameInput = document.querySelector('input');
-const nameInputChanges$ = fromEvent(nameInput, 'keyup');
 
 // Listen for when user changes the name input.
 fromEvent(document.querySelector('input'), 'keyup')
